@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC RAIDERS | TRACKING TERMINAL</title>
+    <title>ARC RAIDERS | TRACKING TERMINAL V9</title>
     <style>
         :root {
             --bg: #0c0e10;
@@ -14,11 +14,11 @@
             --text-main: #e0e0e0;
             --text-dim: #777;
             --input-bg: #000;
-            --common: #b0b0b0;
-            --uncommon: #2ecc71;
-            --rare: #3498db;
-            --epic: #9b59b6;
-            --legendary: #f1c40f;
+            --Common: #b0b0b0;
+            --Uncommon: #2ecc71;
+            --Rare: #3498db;
+            --Epic: #9b59b6;
+            --Legendary: #f1c40f;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -188,11 +188,16 @@
         .dd-item:hover { background: #222; }
         .rarity-tag { font-size: 0.6rem; padding: 2px 4px; border-radius: 2px; text-transform: uppercase; }
 
-        .Common { color: var(--common); }
-        .Uncommon { color: var(--uncommon); }
-        .Rare { color: var(--rare); }
-        .Epic { color: var(--epic); }
-        .Legendary { color: var(--legendary); font-weight: bold; }
+        footer {
+            height: 30px;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #444;
+            border-top: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -371,7 +376,7 @@
         { name: "Vacuum Pump", rarity: "Rare" }
     ].sort((a,b) => a.name.localeCompare(b.name));
 
-    let state = JSON.parse(localStorage.getItem('arc_v8_master')) || { stations: {}, custom: [] };
+    let state = JSON.parse(localStorage.getItem('arc_v9_master')) || { stations: {}, custom: [] };
 
     function init() {
         const grid = document.getElementById('station-grid');
@@ -445,26 +450,41 @@
 
     function save(id, type, idx) {
         if(id) {
-            const data = { i: document.getElementById(id+'-i').value, n: parseInt(document.getElementById(id+'-n').value)||0, h: parseInt(document.getElementById(id+'-h').value)||0 };
+            const data = { 
+                i: document.getElementById(id+'-i').value, 
+                n: parseInt(document.getElementById(id+'-n').value) || 0, 
+                h: parseInt(document.getElementById(id+'-h').value) || 0 
+            };
             if(type === 'station') state.stations[id] = data;
             else state.custom[idx] = { item: data.i, need: data.n, have: data.h };
         }
-        localStorage.setItem('arc_v8_master', JSON.stringify(state));
+        localStorage.setItem('arc_v9_master', JSON.stringify(state));
         updateSummary();
     }
 
     function updateSummary() {
         const list = document.getElementById('extraction-list');
         const totals = {};
+        
         const collect = (o) => { 
             const name = o.i || o.item;
             const need = o.n || o.need;
             const have = o.h || o.have;
-            if(name && need > have) totals[name] = (totals[name] || 0) + (need - have);
+            // FIXED LOGIC: Track even if have is 0
+            if (name && need > have) {
+                totals[name] = (totals[name] || 0) + (need - have);
+            }
         };
+
         Object.values(state.stations).forEach(collect);
         state.custom.forEach(collect);
-        list.innerHTML = Object.entries(totals).map(([n, q]) => `<div class="summary-line"><span>${n}</span><span style="color:var(--accent)">NEED ${q}</span></div>`).join('') || '<div style="color:#333; text-align:center; padding-top:40px;">STASH SECURED.</div>';
+
+        list.innerHTML = Object.entries(totals).map(([n, q]) => `
+            <div class="summary-line">
+                <span>${n}</span>
+                <span style="color:var(--accent)">NEED ${q}</span>
+            </div>
+        `).join('') || '<div style="color:#333; text-align:center; padding-top:40px;">STASH SECURED.</div>';
     }
 
     document.addEventListener('click', e => { if(!e.target.id.includes('-i')) document.querySelectorAll('.dropdown-list').forEach(l => l.style.display='none'); });
