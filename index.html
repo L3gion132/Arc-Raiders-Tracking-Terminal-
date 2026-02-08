@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC RAIDERS | TRACKING TERMINAL V9</title>
+    <title>ARC RAIDERS | TRACKING TERMINAL V13</title>
     <style>
         :root {
             --bg: #0c0e10;
@@ -188,16 +188,11 @@
         .dd-item:hover { background: #222; }
         .rarity-tag { font-size: 0.6rem; padding: 2px 4px; border-radius: 2px; text-transform: uppercase; }
 
-        footer {
-            height: 30px;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.75rem;
-            color: #444;
-            border-top: 1px solid var(--border);
-        }
+        .Common { color: var(--Common); }
+        .Uncommon { color: var(--Uncommon); }
+        .Rare { color: var(--Rare); }
+        .Epic { color: var(--Epic); }
+        .Legendary { color: var(--Legendary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -205,7 +200,7 @@
 <header>
     <h1>TRACKING TERMINAL</h1>
     <div style="display:flex; align-items:center; gap:20px;">
-        <span style="color:var(--text-dim); font-size:0.7rem;">STASH_OS_READY</span>
+        <span style="color:var(--text-dim); font-size:0.7rem;">STASH_OS_ACTIVE</span>
         <button onclick="if(confirm('WIPE DATA?')){localStorage.clear(); location.reload();}" style="background:none; border:1px solid #400; color:#800; padding:3px 10px; font-size:0.65rem; cursor:pointer;">FORMAT_OS</button>
     </div>
 </header>
@@ -226,157 +221,12 @@
 <script>
     const stations = ["Scrappy", "Gunsmith", "Utility Station", "Explosive Station", "Medical Lab", "Gear Bench", "Refiner"];
     
-    // COMPREHENSIVE WIKI DATABASE
+    // MASTER DATABASE FROM UPLOADED CSV
     const itemDatabase = [
-        { name: "Advanced ARC Powercell", rarity: "Rare" },
-        { name: "Advanced Electrical Components", rarity: "Rare" },
-        { name: "Advanced Mechanical Components", rarity: "Rare" },
-        { name: "Agave", rarity: "Uncommon" },
-        { name: "Agave Juice", rarity: "Common" },
-        { name: "Air Freshener", rarity: "Uncommon" },
-        { name: "Alarm Clock", rarity: "Rare" },
-        { name: "Antiseptic", rarity: "Rare" },
-        { name: "Apricot", rarity: "Uncommon" },
-        { name: "ARC Alloy", rarity: "Uncommon" },
-        { name: "ARC Circuitry", rarity: "Rare" },
-        { name: "ARC Coolant", rarity: "Rare" },
-        { name: "ARC Flex Rubber", rarity: "Rare" },
-        { name: "ARC Motion Core", rarity: "Rare" },
-        { name: "ARC Performance Steel", rarity: "Rare" },
-        { name: "ARC Powercell", rarity: "Common" },
-        { name: "ARC Synthetic Resin", rarity: "Rare" },
-        { name: "ARC Thermo Lining", rarity: "Rare" },
-        { name: "Assorted Seeds", rarity: "Common" },
-        { name: "Bastion Cell", rarity: "Epic" },
-        { name: "Battery", rarity: "Uncommon" },
-        { name: "Bicycle Pump", rarity: "Rare" },
-        { name: "Bloated Tuna Can", rarity: "Common" },
-        { name: "Bombardier Cell", rarity: "Epic" },
-        { name: "Breathtaking Snow Globe", rarity: "Epic" },
-        { name: "Broken Flashlight", rarity: "Rare" },
-        { name: "Broken Guidance System", rarity: "Rare" },
-        { name: "Broken Handheld Radio", rarity: "Rare" },
-        { name: "Broken Taser", rarity: "Rare" },
-        { name: "Burned ARC Circuitry", rarity: "Uncommon" },
-        { name: "Camera Lens", rarity: "Uncommon" },
-        { name: "Candleberries", rarity: "Rare" },
-        { name: "Candle Holder", rarity: "Uncommon" },
-        { name: "Canister", rarity: "Uncommon" },
-        { name: "Cat Bed", rarity: "Uncommon" },
-        { name: "Chemicals", rarity: "Common" },
-        { name: "Coffee Pot", rarity: "Common" },
-        { name: "Complex Gun Parts", rarity: "Epic" },
-        { name: "Coolant", rarity: "Rare" },
-        { name: "Cooling Coil", rarity: "Rare" },
-        { name: "Cooling Fan", rarity: "Rare" },
-        { name: "Cracked Bioscanner", rarity: "Rare" },
-        { name: "Crude Explosives", rarity: "Uncommon" },
-        { name: "Crumpled Plastic Bottle", rarity: "Uncommon" },
-        { name: "Damaged ARC Motion Core", rarity: "Uncommon" },
-        { name: "Damaged ARC Powercell", rarity: "Common" },
-        { name: "Damaged Fireball Burner", rarity: "Common" },
-        { name: "Damaged Heat Sink", rarity: "Rare" },
-        { name: "Damaged Hornet Driver", rarity: "Common" },
-        { name: "Damaged Rocketeer Driver", rarity: "Common" },
-        { name: "Damaged Tick Pod", rarity: "Common" },
-        { name: "Damaged Wasp Driver", rarity: "Common" },
-        { name: "Dart Board", rarity: "Uncommon" },
-        { name: "Deflated Football", rarity: "Uncommon" },
-        { name: "Degraded ARC Rubber", rarity: "Uncommon" },
-        { name: "Diving Goggles", rarity: "Rare" },
-        { name: "Dog Collar", rarity: "Rare" },
-        { name: "Dried-Out ARC Resin", rarity: "Uncommon" },
-        { name: "Duct Tape", rarity: "Uncommon" },
-        { name: "Durable Cloth", rarity: "Uncommon" },
-        { name: "Electrical Components", rarity: "Uncommon" },
-        { name: "Empty Wine Bottle", rarity: "Common" },
-        { name: "Exodus Modules", rarity: "Epic" },
-        { name: "Expired Pasta", rarity: "Common" },
-        { name: "Expired Respirator", rarity: "Rare" },
-        { name: "Explosive Compound", rarity: "Rare" },
-        { name: "Fabric", rarity: "Common" },
-        { name: "Faded Photograph", rarity: "Common" },
-        { name: "Fertilizer", rarity: "Uncommon" },
-        { name: "Film Reel", rarity: "Rare" },
-        { name: "Fine Wristwatch", rarity: "Rare" },
-        { name: "Fireball Burner", rarity: "Uncommon" },
-        { name: "Flow Controller", rarity: "Rare" },
-        { name: "Fossilized Lightning", rarity: "Epic" },
-        { name: "Frequency Modulation Box", rarity: "Rare" },
-        { name: "Fried Motherboard", rarity: "Rare" },
-        { name: "Frying Pan", rarity: "Rare" },
-        { name: "Garlic Press", rarity: "Uncommon" },
-        { name: "Geiger Counter", rarity: "Epic" },
-        { name: "Great Mullein", rarity: "Uncommon" },
-        { name: "Headphones", rarity: "Rare" },
-        { name: "Heavy Gun Parts", rarity: "Rare" },
-        { name: "Hornet Driver", rarity: "Rare" },
-        { name: "Household Cleaner", rarity: "Uncommon" },
-        { name: "Humidifier", rarity: "Rare" },
-        { name: "Industrial Battery", rarity: "Rare" },
-        { name: "Industrial Charger", rarity: "Rare" },
-        { name: "Industrial Magnet", rarity: "Rare" },
-        { name: "Ion Sputter", rarity: "Epic" },
-        { name: "Laboratory Reagents", rarity: "Rare" },
-        { name: "Lance's Mixtape", rarity: "Epic" },
-        { name: "Leaper Pulse Unit", rarity: "Epic" },
-        { name: "Lemon", rarity: "Uncommon" },
-        { name: "Light Gun Parts", rarity: "Rare" },
-        { name: "Magnet", rarity: "Uncommon" },
-        { name: "Magnetic Accelerator", rarity: "Epic" },
-        { name: "Magnetron", rarity: "Epic" },
-        { name: "Matriarch Reactor", rarity: "Legendary" },
-        { name: "Mechanical Components", rarity: "Uncommon" },
-        { name: "Medium Gun Parts", rarity: "Rare" },
-        { name: "Metal Brackets", rarity: "Uncommon" },
-        { name: "Metal Parts", rarity: "Common" },
-        { name: "Micro-Controller", rarity: "Rare" },
-        { name: "Microwave Magnetron", rarity: "Epic" },
-        { name: "Mod Components", rarity: "Rare" },
-        { name: "Motor", rarity: "Rare" },
-        { name: "Mushroom", rarity: "Common" },
-        { name: "Muzzle Brake", rarity: "Uncommon" },
-        { name: "Old Boot", rarity: "Common" },
-        { name: "Olives", rarity: "Uncommon" },
-        { name: "Optic Lens", rarity: "Rare" },
-        { name: "Overlord CPU", rarity: "Epic" },
-        { name: "Plastic Parts", rarity: "Common" },
-        { name: "Pop Trigger", rarity: "Uncommon" },
-        { name: "Portable Defibrillator", rarity: "Epic" },
-        { name: "Power Cable", rarity: "Uncommon" },
-        { name: "Precision Gears", rarity: "Rare" },
-        { name: "Prickly Pear", rarity: "Uncommon" },
-        { name: "Purified Water", rarity: "Common" },
-        { name: "Queen Reactor", rarity: "Legendary" },
-        { name: "Receiver", rarity: "Rare" },
-        { name: "Rocketeer Driver", rarity: "Epic" },
-        { name: "Rubber Parts", rarity: "Common" },
-        { name: "Rusty Key", rarity: "Common" },
-        { name: "Rusty Tools", rarity: "Common" },
-        { name: "Saline Solution", rarity: "Uncommon" },
-        { name: "Scrap Metal", rarity: "Common" },
-        { name: "Sensors", rarity: "Rare" },
-        { name: "Sentinel Firing Core", rarity: "Rare" },
-        { name: "Simple Gun Parts", rarity: "Uncommon" },
-        { name: "Snitch Scanner", rarity: "Uncommon" },
-        { name: "Speaker Component", rarity: "Uncommon" },
-        { name: "Steel Spring", rarity: "Uncommon" },
-        { name: "Sterile Bandage", rarity: "Rare" },
-        { name: "Stock", rarity: "Rare" },
-        { name: "Suppressor Parts", rarity: "Rare" },
-        { name: "Surveyor Vault", rarity: "Rare" },
-        { name: "Syringe", rarity: "Rare" },
-        { name: "Synthesized Fuel", rarity: "Rare" },
-        { name: "Tactical Rail", rarity: "Rare" },
-        { name: "Tick Pod", rarity: "Uncommon" },
-        { name: "Titanium Hull Plate", rarity: "Epic" },
-        { name: "Toaster", rarity: "Rare" },
-        { name: "Toy Robot", rarity: "Epic" },
-        { name: "Trigger Assembly", rarity: "Rare" },
-        { name: "Vacuum Pump", rarity: "Rare" }
+        {"name": "Advanced ARC Powercell", "rarity": "Rare"}, {"name": "Advanced Electrical Components", "rarity": "Rare"}, {"name": "Advanced Mechanical Components", "rarity": "Rare"}, {"name": "Agave", "rarity": "Uncommon"}, {"name": "Agave Juice", "rarity": "Common"}, {"name": "Air Freshener", "rarity": "Uncommon"}, {"name": "Alarm Clock", "rarity": "Rare"}, {"name": "Antiseptic", "rarity": "Rare"}, {"name": "Apricot", "rarity": "Uncommon"}, {"name": "ARC Alloy", "rarity": "Uncommon"}, {"name": "ARC Circuitry", "rarity": "Rare"}, {"name": "ARC Coolant", "rarity": "Rare"}, {"name": "ARC Flex Rubber", "rarity": "Rare"}, {"name": "ARC Motion Core", "rarity": "Rare"}, {"name": "ARC Performance Steel", "rarity": "Rare"}, {"name": "ARC Powercell", "rarity": "Common"}, {"name": "ARC Synthetic Resin", "rarity": "Rare"}, {"name": "ARC Thermo Lining", "rarity": "Rare"}, {"name": "Assorted Seeds", "rarity": "Common"}, {"name": "Bastion Cell", "rarity": "Epic"}, {"name": "Battery", "rarity": "Uncommon"}, {"name": "Bicycle Pump", "rarity": "Rare"}, {"name": "Bloated Tuna Can", "rarity": "Common"}, {"name": "Bombardier Cell", "rarity": "Epic"}, {"name": "Breathtaking Snow Globe", "rarity": "Epic"}, {"name": "Broken Flashlight", "rarity": "Rare"}, {"name": "Broken Guidance System", "rarity": "Rare"}, {"name": "Broken Handheld Radio", "rarity": "Rare"}, {"name": "Broken Taser", "rarity": "Rare"}, {"name": "Burned ARC Circuitry", "rarity": "Uncommon"}, {"name": "Camera Lens", "rarity": "Uncommon"}, {"name": "Candle Holder", "rarity": "Uncommon"}, {"name": "Candleberries", "rarity": "Rare"}, {"name": "Canister", "rarity": "Uncommon"}, {"name": "Cat Bed", "rarity": "Uncommon"}, {"name": "Chemicals", "rarity": "Common"}, {"name": "Coffee Pot", "rarity": "Common"}, {"name": "Complex Gun Parts", "rarity": "Epic"}, {"name": "Coolant", "rarity": "Rare"}, {"name": "Cooling Coil", "rarity": "Rare"}, {"name": "Cooling Fan", "rarity": "Rare"}, {"name": "Cracked Bioscanner", "rarity": "Rare"}, {"name": "Crude Explosives", "rarity": "Uncommon"}, {"name": "Crumpled Plastic Bottle", "rarity": "Uncommon"}, {"name": "Damaged ARC Motion Core", "rarity": "Uncommon"}, {"name": "Damaged ARC Powercell", "rarity": "Common"}, {"name": "Damaged Fireball Burner", "rarity": "Common"}, {"name": "Damaged Heat Sink", "rarity": "Rare"}, {"name": "Damaged Hornet Driver", "rarity": "Common"}, {"name": "Damaged Rocketeer Driver", "rarity": "Common"}, {"name": "Damaged Tick Pod", "rarity": "Common"}, {"name": "Damaged Wasp Driver", "rarity": "Common"}, {"name": "Dart Board", "rarity": "Uncommon"}, {"name": "Deflated Football", "rarity": "Uncommon"}, {"name": "Degraded ARC Rubber", "rarity": "Uncommon"}, {"name": "Diving Goggles", "rarity": "Rare"}, {"name": "Dog Collar", "rarity": "Rare"}, {"name": "Dried-Out ARC Resin", "rarity": "Uncommon"}, {"name": "Durable Cloth", "rarity": "Uncommon"}, {"name": "Electrical Components", "rarity": "Uncommon"}, {"name": "Empty Wine Bottle", "rarity": "Common"}, {"name": "Exodus Modules", "rarity": "Epic"}, {"name": "Expired Pasta", "rarity": "Common"}, {"name": "Expired Respirator", "rarity": "Rare"}, {"name": "Explosive Compound", "rarity": "Rare"}, {"name": "Fabric", "rarity": "Common"}, {"name": "Faded Photograph", "rarity": "Common"}, {"name": "Fertilizer", "rarity": "Uncommon"}, {"name": "Film reel", "rarity": "Rare"}, {"name": "Fine Wristwatch", rarity: "Rare"}, {"name": "Fireball Burner", "rarity": "Uncommon"}, {"name": "Flow Controller", "rarity": "Rare"}, {"name": "Fossilized Lightning", "rarity": "Epic"}, {"name": "Frequency Modulation Box", "rarity": "Rare"}, {"name": "Fried Motherboard", "rarity": "Rare"}, {"name": "Frying Pan", "rarity": "Rare"}, {"name": "Garlic Press", "rarity": "Uncommon"}, {"name": "Geiger Counter", "rarity": "Epic"}, {"name": "Great Mullein", "rarity": "Uncommon"}, {"name": "Headphones", "rarity": "Rare"}, {"name": "Heavy Gun Parts", "rarity": "Rare"}, {"name": "Hornet Driver", "rarity": "Rare"}, {"name": "Household Cleaner", "rarity": "Uncommon"}, {"name": "Humidifier", "rarity": "Rare"}, {"name": "Ice Cream Scooper", "rarity": "Uncommon"}, {"name": "Impure ARC Coolant", "rarity": "Uncommon"}, {"name": "Industrial Battery", "rarity": "Rare"}, {"name": "Industrial Charger", "rarity": "Rare"}, {"name": "Industrial Magnet", "rarity": "Rare"}, {"name": "Ion Sputter", "rarity": "Epic"}, {"name": "Laboratory Reagents", "rarity": "Rare"}, {"name": "Lance's Mixtape", "rarity": "Epic"}, {"name": "Leaper Pulse Unit", "rarity": "Epic"}, {"name": "Lemon", "rarity": "Uncommon"}, {"name": "Light Gun Parts", "rarity": "Rare"}, {"name": "Light Bulb", "rarity": "Uncommon"}, {"name": "Magnet", "rarity": "Uncommon"}, {"name": "Magnetic Accelerator", "rarity": "Epic"}, {"name": "Magnetron", "rarity": "Epic"}, {"name": "Matriarch Reactor", "rarity": "Legendary"}, {"name": "Mechanical Components", "rarity": "Uncommon"}, {"name": "Medium Gun Parts", "rarity": "Rare"}, {"name": "Metal Brackets", "rarity": "Uncommon"}, {"name": "Metal Parts", "rarity": "Common"}, {"name": "Micro-Controller", "rarity": "Rare"}, {"name": "Microscope", "rarity": "Rare"}, {"name": "Microwave Magnetron", "rarity": "Epic"}, {"name": "Mod Components", "rarity": "Rare"}, {"name": "Motor", "rarity": "Rare"}, {"name": "Mushroom", "rarity": "Common"}, {"name": "Muzzle Brake", "rarity": "Uncommon"}, {"name": "Old Boot", "rarity": "Common"}, {"name": "Olives", "rarity": "Uncommon"}, {"name": "Optic Lens", "rarity": "Rare"}, {"name": "Overlord CPU", "rarity": "Epic"}, {"name": "Photoelectric Cloak", "rarity": "Rare"}, {"name": "Photoelectric Cloak Snap Hook", "rarity": "Rare"}, {"name": "Plastic Parts", "rarity": "Common"}, {"name": "Pop Trigger", "rarity": "Uncommon"}, {"name": "Portable TV", "rarity": "Rare"}, {"name": "Poster of Natural Wonders", "rarity": "Uncommon"}, {"name": "Pottery", "rarity": "Uncommon"}, {"name": "Power Bank", "rarity": "Rare"}, {"name": "Power Cable", "rarity": "Rare"}, {"name": "Power Rod", "rarity": "Epic"}, {"name": "Prickly Pear", "rarity": "Uncommon"}, {"name": "Processor", "rarity": "Rare"}, {"name": "Projector", "rarity": "Rare"}, {"name": "Queen Reactor", "rarity": "Legendary"}, {"name": "Radio", "rarity": "Rare"}, {"name": "Radio Relay", "rarity": "Rare"}, {"name": "Recorder", "rarity": "Uncommon"}, {"name": "Red Coral Jewlery", "rarity": "Rare"}, {"name": "Remote Control", "rarity": "Rare"}, {"name": "Resin", "rarity": "Common"}, {"name": "Ripped Safety Vest", "rarity": "Uncommon"}, {"name": "Rocket Thruster", "rarity": "Rare"}, {"name": "Rocketeer Driver", "rarity": "Epic"}, {"name": "Roots", "rarity": "Uncommon"}, {"name": "Rope", "rarity": "Rare"}, {"name": "Rosary", "rarity": "Rare"}, {"name": "Rotary Encoder", "rarity": "Rare"}, {"name": "Rubber Duck", "rarity": "Common"}, {"name": "Rubber Pad", "rarity": "Rare"}, {"name": "Rubber Parts", "rarity": "Common"}, {"name": "Ruined Accordion", "rarity": "Rare"}, {"name": "Ruined Baton", "rarity": "Uncommon"}, {"name": "Ruined Handcuffs", "rarity": "Uncommon"}, {"name": "Ruined Parachute", "rarity": "Uncommon"}, {"name": "Ruined Riot Shield", "rarity": "Rare"}, {"name": "Ruined Tactical Vest", "rarity": "Uncommon"}, {"name": "Rusted Bolts", "rarity": "Uncommon"}, {"name": "Rusted Gear", "rarity": "Rare"}, {"name": "Rusted Shut Medical Kit", "rarity": "Rare"}, {"name": "Rusted Tools", "rarity": "Rare"}, {"name": "Rusty ARC Steel", "rarity": "Uncommon"}, {"name": "Sample Cleaner", "rarity": "Rare"}, {"name": "Sensors", "rarity": "Rare"}, {"name": "Sentinel Firing Core", "rarity": "Rare"}, {"name": "Shredder Gyro", "rarity": "Rare"}, {"name": "Signal Amplifier", "rarity": "Rare"}, {"name": "Silver Teaspoon Set", "rarity": "Rare"}, {"name": "Simple Gun Parts", "rarity": "Uncommon"}, {"name": "Snitch Scanner", "rarity": "Uncommon"}, {"name": "Speaker Component", "rarity": "Rare"}, {"name": "Spectrometer", "rarity": "Rare"}, {"name": "Spectrum Analyzer", "rarity": "Epic"}, {"name": "Spotter Relay", "rarity": "Uncommon"}, {"name": "Spring Cushion", "rarity": "Rare"}, {"name": "Statuette", "rarity": "Rare"}, {"name": "Steel Spring", "rarity": "Uncommon"}, {"name": "Surveyor Vault", "rarity": "Rare"}, {"name": "Synthesized Fuel", "rarity": "Rare"}, {"name": "Syringe", "rarity": "Rare"}, {"name": "Tattered ARC Lining", "rarity": "Uncommon"}, {"name": "Tattered Clothes", "rarity": "Uncommon"}, {"name": "Telemetry Transceiver", "rarity": "Rare"}, {"name": "Thermostat", "rarity": "Rare"}, {"name": "Tick Pod", "rarity": "Uncommon"}, {"name": "Titanium Hull Plate", "rarity": "Epic"}, {"name": "Toaster", "rarity": "Rare"}, {"name": "Toy Robot", "rarity": "Epic"}, {"name": "Trigger Assembly", "rarity": "Rare"}, {"name": "Vacuum Pump", "rarity": "Rare"}, {"name": "Vacuum Tube", "rarity": "Rare"}, {"name": "Very Comfortable Pillow", "rarity": "Epic"}, {"name": "Vita Shot", "rarity": "Common"}, {"name": "Vita Spray", "rarity": "Common"}, {"name": "Voltage Converter", "rarity": "Uncommon"}, {"name": "Wasp Driver", "rarity": "Uncommon"}, {"name": "Wires", "rarity": "Common"}
     ].sort((a,b) => a.name.localeCompare(b.name));
 
-    let state = JSON.parse(localStorage.getItem('arc_v9_master')) || { stations: {}, custom: [] };
+    let state = JSON.parse(localStorage.getItem('arc_v13_final')) || { stations: {}, custom: [] };
 
     function init() {
         const grid = document.getElementById('station-grid');
@@ -420,7 +270,7 @@
 
     function addCustom() {
         const idx = state.custom.length;
-        state.custom.push({item:'', need:0, have:0});
+        state.custom.push({item:'', need: 0, have: 0});
         renderCustom(idx);
         save();
     }
@@ -458,7 +308,7 @@
             if(type === 'station') state.stations[id] = data;
             else state.custom[idx] = { item: data.i, need: data.n, have: data.h };
         }
-        localStorage.setItem('arc_v9_master', JSON.stringify(state));
+        localStorage.setItem('arc_v13_final', JSON.stringify(state));
         updateSummary();
     }
 
@@ -466,12 +316,15 @@
         const list = document.getElementById('extraction-list');
         const totals = {};
         
-        const collect = (o) => { 
-            const name = o.i || o.item;
-            const need = o.n || o.need;
-            const have = o.h || o.have;
-            // FIXED LOGIC: Track even if have is 0
-            if (name && need > have) {
+        const collect = (entry) => { 
+            const name = entry.i || entry.item;
+            const nVal = entry.n !== undefined ? entry.n : entry.need;
+            const hVal = entry.h !== undefined ? entry.h : entry.have;
+            const need = parseInt(nVal) || 0;
+            const have = parseInt(hVal) || 0;
+            
+            // STRICT LOGIC: Fix for 0-count tracking
+            if (name && name.trim() !== "" && need > have) {
                 totals[name] = (totals[name] || 0) + (need - have);
             }
         };
@@ -479,12 +332,18 @@
         Object.values(state.stations).forEach(collect);
         state.custom.forEach(collect);
 
-        list.innerHTML = Object.entries(totals).map(([n, q]) => `
-            <div class="summary-line">
-                <span>${n}</span>
-                <span style="color:var(--accent)">NEED ${q}</span>
-            </div>
-        `).join('') || '<div style="color:#333; text-align:center; padding-top:40px;">STASH SECURED.</div>';
+        const itemsToExtract = Object.entries(totals);
+        
+        if (itemsToExtract.length === 0) {
+            list.innerHTML = '<div style="color:#333; text-align:center; padding-top:40px;">STASH SECURED.</div>';
+        } else {
+            list.innerHTML = itemsToExtract.map(([n, q]) => `
+                <div class="summary-line">
+                    <span>${n}</span>
+                    <span style="color:var(--accent)">NEED ${q}</span>
+                </div>
+            `).join('');
+        }
     }
 
     document.addEventListener('click', e => { if(!e.target.id.includes('-i')) document.querySelectorAll('.dropdown-list').forEach(l => l.style.display='none'); });
