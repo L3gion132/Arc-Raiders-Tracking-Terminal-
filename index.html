@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARC RAIDERS | TRACKING TERMINAL V7</title>
+    <style>
+        :root {
+            --bg: #0c0e10;
+            --card: #15181b;
+            --accent: #ff6b00;
+            --blue: #00d4ff;
+            --border: #2c3238;
+            --text-main: #e0e0e0;
+            --text-dim: #777;
+            --input-bg: #000;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Share Tech Mono', monospace;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            height: 60px;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+            background: #000;
+        }
+
+        h1 { font-size: 1.5rem; letter-spacing: 4px; color: var(--accent); }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 380px; 
+            height: calc(100vh - 90px);
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            color: var(--blue);
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .row-labels {
+            display: grid;
+            grid-template-columns: 1fr 50px 50px;
+            gap: 6px;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 50px 50px;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            border-radius: 3px;
+        }
+
+        input:focus { border-color: var(--accent); outline: none; }
+        .qty-input { color: var(--accent); text-align: center; }
+
+        .custom-scroll {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--border); }
+
+        .btn-add {
+            background: none;
+            border: 1px dashed var(--blue);
+            color: var(--blue);
+            width: 100%;
+            padding: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+        .btn-add:hover { background: rgba(0, 212, 255, 0.1); }
+
+        .sidebar {
+            background: #080a0c;
+            border: 1px solid var(--accent);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-title { color: var(--accent); margin-bottom: 15px; font-size: 1.1rem; border-bottom: 1px solid var(--accent); padding-bottom: 8px; }
+        .summary-scroll { flex-grow: 1; overflow-y: auto; }
+        .summary-scroll::-webkit-scrollbar { width: 3px; }
+        .summary-scroll::-webkit-scrollbar-thumb { background: var(--accent); }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            background: #111;
+            padding: 10px 15px;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        footer {
+            height: 30px;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #444;
+            border-top: 1px solid var(--border);
+        }
+
+        .dropdown-list {
+            position: absolute;
+            background: #111;
+            border: 1px solid var(--accent);
+            z-index: 1000;
+            width: 220px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .dd-item { padding: 8px; cursor: pointer; font-size: 0.8rem; }
+        .dd-item:hover { background: var(--accent); color: #000; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>TRACKING TERMINAL</h1>
+    <div style="display:flex; align-items:center; gap:20px;">
+        <span style="color:var(--text-dim); font-size:0.7rem;">STASH_OS_READY</span>
+        <button onclick="if(confirm('WIPE DATA?')){localStorage.clear(); location.reload();}" style="background:none; border:1px solid #400; color:#800; padding:3px 10px; font-size:0.65rem; cursor:pointer;">FORMAT_OS</button>
+    </div>
+</header>
+
+<main>
+    <div class="grid-container" id="station-grid"></div>
+
+    <div class="sidebar">
+        <div class="sidebar-title">EXTRACTION_REQUIRED</div>
+        <div class="summary-scroll" id="extraction-list"></div>
+    </div>
+</main>
+
+<footer>
+    &copy; 2026 Lil_ArtGhoul | ALL RIGHTS RESERVED | ARC RAIDERS COMMAND
+</footer>
+
+<script>
+    const stations = ["Scrappy", "Gunsmith", "Utility Station", "Explosive Station", "Medical Lab", "Gear Bench", "Refiner"];
+    const items = ["ARC Alloy", "ARC Circuitry", "ARC Motion Core", "Chemicals", "Metal Parts", "Plastic Parts", "Rubber Parts", "Wires", "Battery", "Fabric", "Steel Spring", "Advanced Electrical", "Advanced Mechanical", "Cooling Fan", "Motor", "Industrial Battery"].sort();
+
+    let state = JSON.parse(localStorage.getItem('arc_v7_ghoul')) || { stations: {}, custom: [] };
+
+    function init() {
+        const grid = document.getElementById('station-grid');
+        stations.forEach((s, idx) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<div class="card-header"><span>${s}</span><span style="opacity:0.2; font-size:0.6rem;">STN_0${idx+1}</span></div>
+                              <div class="row-labels"><span>ITEM_NAME</span><span>NEED</span><span>HAVE</span></div>`;
+            for(let i=1; i<=3; i++) {
+                const id = `${s.replace(/\s/g,'')}_r${i}`;
+                card.appendChild(createRow(id, 'station'));
+            }
+            grid.appendChild(card);
+        });
+
+        const customCard = document.createElement('div');
+        customCard.className = 'card';
+        customCard.innerHTML = `<div class="card-header" style="color:var(--accent)"><span>CUSTOM_PROJECTS</span><span style="opacity:0.2; font-size:0.6rem;">OBJ_08</span></div>
+                                <div class="row-labels"><span>ITEM_NAME</span><span>NEED</span><span>HAVE</span></div>
+                                <div class="custom-scroll" id="custom-container"></div>
+                                <button class="btn-add" onclick="addCustom()">+ ADD OBJECTIVE</button>`;
+        grid.appendChild(customCard);
+        state.custom.forEach((_, idx) => renderCustom(idx));
+        updateSummary();
+    }
+
+    function createRow(id, type, idx = null) {
+        const data = type === 'station' ? (state.stations[id] || {i:'', n:0, h:0}) : state.custom[idx];
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `
+            <div style="position:relative">
+                <input type="text" placeholder="..." id="${id}-i" value="${data.i || data.item || ''}" oninput="search('${id}')" onfocus="search('${id}')">
+                <div id="${id}-list" class="dropdown-list"></div>
+            </div>
+            <input type="number" class="qty-input" id="${id}-n" value="${data.n || data.need || 0}" onchange="save('${id}','${type}',${idx})">
+            <input type="number" class="qty-input" id="${id}-h" value="${data.h || data.have || 0}" onchange="save('${id}','${type}',${idx})">
+        `;
+        return row;
+    }
+
+    function addCustom() {
+        const idx = state.custom.length;
+        state.custom.push({item:'', need:0, have:0});
+        renderCustom(idx);
+        save();
+    }
+
+    function renderCustom(idx) {
+        document.getElementById('custom-container').appendChild(createRow(`c${idx}`, 'custom', idx));
+    }
+
+    function search(id) {
+        const val = document.getElementById(id+'-i').value.toLowerCase();
+        const list = document.getElementById(id+'-list');
+        list.style.display = 'block';
+        list.innerHTML = items.filter(i => i.toLowerCase().includes(val)).map(i => `<div class="dd-item" onclick="select('${id}','${i}')">${i}</div>`).join('');
+    }
+
+    function select(id, val) {
+        document.getElementById(id+'-i').value = val;
+        document.getElementById(id+'-list').style.display = 'none';
+        const type = id.startsWith('c') ? 'custom' : 'station';
+        const idx = type === 'custom' ? parseInt(id.substring(1)) : null;
+        save(id, type, idx);
+    }
+
+    function save(id, type, idx) {
+        if(id) {
+            const data = { i: document.getElementById(id+'-i').value, n: parseInt(document.getElementById(id+'-n').value)||0, h: parseInt(document.getElementById(id+'-h').value)||0 };
+            if(type === 'station') state.stations[id] = data;
+            else state.custom[idx] = { item: data.i, need: data.n, have: data.h };
+        }
+        localStorage.setItem('arc_v7_ghoul', JSON.stringify(state));
+        updateSummary();
+    }
+
+    function updateSummary() {
+        const list = document.getElementById('extraction-list');
+        const totals = {};
+        const collect = (o) => { 
+            const name = o.i || o.item;
+            const need = o.n || o.need;
+            const have = o.h || o.have;
+            if(name && need > have) totals[name] = (totals[name] || 0) + (need - have);
+        };
+        Object.values(state.stations).forEach(collect);
+        state.custom.forEach(collect);
+        list.innerHTML = Object.entries(totals).map(([n, q]) => `<div class="summary-line"><span>${n}</span><span style="color:var(--accent)">NEED ${q}</span></div>`).join('') || '<div style="color:#333; text-align:center; padding-top:40px;">STASH SECURED.</div>';
+    }
+
+    document.addEventListener('click', e => { if(!e.target.id.includes('-i')) document.querySelectorAll('.dropdown-list').forEach(l => l.style.display='none'); });
+    init();
+</script>
+</body>
+</html>
